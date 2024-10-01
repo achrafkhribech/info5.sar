@@ -5,7 +5,8 @@ public class RendezVous {
     Broker ab; // accepting broker
     Broker cv; // connecting broker
 
-    private void _wait() {
+    // Wait until both channels are set
+    private synchronized void _wait() {
         while (ac == null || cc == null) {
             try {
                 wait();
@@ -15,6 +16,7 @@ public class RendezVous {
         }
     }
 
+<<<<<<< HEAD
     synchronized Channel connect(Broker cb, int port) {    
         this.cb = cb;
         cc = new ChannelImpl(cb, port);
@@ -37,3 +39,31 @@ public class RendezVous {
 
 
 }
+=======
+    // Connect two brokers
+    synchronized Channel connect(Broker cb, int port) {    
+        this.cv = cb; 
+        cc = new ChannelImpl(cb, port);
+        if (ac != null) {
+            ac.connect(cc, cb.getName());
+            notifyAll(); 
+        } else {
+            _wait(); 
+        }
+        return cc;
+    }
+
+    // Accept a connection
+    synchronized Channel accept(Broker ab, int port) {
+        this.ab = ab; 
+        ac = new ChannelImpl(ab, port);
+        if (cc != null) {
+            ac.connect(cc, ab.getName());
+            notifyAll(); 
+        } else {
+            _wait(); 
+        }
+        return ac;
+    }
+}
+>>>>>>> test.implementation

@@ -1,24 +1,22 @@
-import java.util.*;
+abstract class Broker {
+    // Field to store the broker's name
+    protected String name;
 
-class Broker {
-    private String name;
-    private Map<Integer, RDV> acceptConnections = new HashMap<>();
-    
-    public Broker(String name) {
+    // Constructor to initialize the broker's name
+    Broker(String name) {
         this.name = name;
     }
 
-    public String getName() {
+    // Method to get the broker's name
+    String getName() {
         return name;
     }
 
-    public synchronized Channel accept(int port) {
-        RendezVous rdv = acceptConnections.computeIfAbsent(port, k -> new RDV());
-        return rdv.accept();
-    }
+    // Abstract method to accept a connection on a given port
+    abstract Channel accept(int port);
 
-    public synchronized Channel connect(String name, int port) {
-        RendezVous rdv = acceptConnections.computeIfAbsent(port, k -> new RDV());
-        return rdv.connect();
-    }
+    // Abstract method to connect to a given broker by name and port
+    abstract Channel connect(String name, int port);
 }
+
+   
