@@ -1,4 +1,7 @@
 abstract class Channel {
+    public Channel(Broker broker) {
+    }
+
     // Method to read bytes from the channel
     abstract int read(byte[] bytes, int offset, int length);
 
