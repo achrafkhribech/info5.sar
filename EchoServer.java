@@ -1,6 +1,6 @@
 public class EchoServer {
     public static void main(String[] args) {
-        Broker broker = new Broker("EchoServer");
+        BrokerImpl broker = new BrokerImpl("Server");
 
         // Server accepts connections in a separate thread
         new Thread(() -> {
