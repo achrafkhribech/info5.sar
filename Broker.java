@@ -7,6 +7,11 @@ abstract class Broker {
         this.name = name;
     }
 
+    // Method to get the broker's name
+    String getName() {
+        return name;
+    }
+
     // Abstract method to accept a connection on a given port
     abstract Channel accept(int port);
 
