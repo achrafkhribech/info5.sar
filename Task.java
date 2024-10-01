@@ -1,9 +1,4 @@
 abstract class Task extends Thread {
-<<<<<<< HEAD
-    Task(Broker b, Runnable r);
-    static Broker getBroker();
-}
-=======
     protected Broker broker;
     protected Runnable runnable;
 
@@ -16,4 +11,3 @@ abstract class Task extends Thread {
     // Abstract method to get the Broker instance
     public abstract Broker getBroker();
 }
->>>>>>> test.implementation
