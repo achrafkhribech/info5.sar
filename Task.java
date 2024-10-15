@@ -1,13 +1,29 @@
-abstract class Task extends Thread {
-    protected Broker broker;
-    protected Runnable runnable;
+public class Task extends Thread {
+	private BrokerImpl broker;
+	private Runnable runnable;
 
-    // Constructor that takes a Broker and a Runnable as parameters
-    public Task(Broker b, Runnable r) {
-        this.broker = b;
-        this.runnable = r;
-    }
+	public Task(BrokerImpl b, Runnable r) {
+		this.broker = b;
+		this.runnable = r;
+		this.start(); // Changed from this.run() to this.start()
+	}
+	
+	
+	@Override
+	public void run() {
+		this.runnable.run();
+	}
 
-    // Abstract method to get the Broker instance
-    public abstract Broker getBroker();
+	
+	public BrokerImpl getBroker() {
+		return this.broker;
+	}
+	
+	public static Task getTask() {
+		Thread currentThread = Thread.currentThread();
+		if (currentThread instanceof Task) {
+			return ((Task) currentThread);
+		}
+		throw new RuntimeException("Current thread is not a Task instance");
+	}
 }

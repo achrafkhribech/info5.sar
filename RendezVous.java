@@ -16,30 +16,6 @@ public class RendezVous {
         }
     }
 
-<<<<<<< HEAD
-    synchronized Channel connect(Broker cb, int port) {    
-        this.cb = cb;
-        cc = new ChannelImpl(cb, port);
-        if (ac != null) {
-            ac.connect(cc, cb.getName());
-            notify();
-        } else wait();
-        return cc;
-    }
-
-    synchronized Channel accept(Broker ab, int port) {
-        this.ab = ab;
-        ac = new ChannelImpl(ab, port);
-        if (cc != null) {
-            ac.connect(cc, ab.getName());
-            notify();
-        } else wait();
-        return ac;
-    }
-
-
-}
-=======
     // Connect two brokers
     synchronized Channel connect(Broker cb, int port) {    
         this.cv = cb; 
@@ -66,4 +42,3 @@ public class RendezVous {
         return ac;
     }
 }
->>>>>>> test.implementation

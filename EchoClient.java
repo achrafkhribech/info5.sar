@@ -9,7 +9,7 @@ public class EchoClient implements Runnable {
 
     @Override
     public void run() {
-        Broker clientBroker = new Broker("Client");
+        Broker clientBroker = new BrokerImpl("Client");
         Channel channel = clientBroker.connect(serverAddress, port);
         if (channel != null) {
             byte[] dataToSend = new byte[255];
