@@ -1,11 +1,11 @@
-import event.Task;
-import ichannels.IBroker.AcceptListener;
-import ichannels.IBroker.ConnectListener;
-import ichannels.IChannel;
+import Task;
+import IBroker.AcceptListener;
+import IBroker.ConnectListener;
+import IChannel;
 
 public class Binder {
 	private Task task;
-	private AcceptRunnable acceptRunnable;
+	private ConnectionAccpter connectionAccepter;
 	Channel acceptChannel;
 	Channel connectChannel;	
 	boolean alreadyAccepted;
@@ -20,7 +20,7 @@ public class Binder {
 	}
 	
 	public void bind() {
-		task.post(acceptRunnable);
+		task.post(connectionAccepter);
 	}
 	
 	public void kill() {
