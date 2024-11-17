@@ -1,70 +1,64 @@
 import java.util.HashMap;
-import java.util.Map;
 
-import event.Task;
 import ichannels.IBroker;
+import ichannels.IChannel;
 
 public class Broker implements IBroker {
-
-	private String name;
-	private BrokerManager manager;
-	private Map<Integer, Binder> binders;
-
-	public Broker(String string) {
-		this.name = string;
-		this.manager = BrokerManager.getInstance();
-		this.binders = new HashMap<Integer, Binder>();
-		manager.registerBroker(this);
+	private final String name;
+	private final HashMap<Integer, RendezVous> acceptRendezVous;
+	
+	public Broker(String name) {
+		this.name = name;
+		this.acceptRendezVous = new HashMap<>();
+		BrokerManager.getInstance().registerBroker(this);
 	}
-
+	
 	@Override
-	public boolean unbind(int port) {
-		Binder binder = binders.get(port);
-		if (binders == null) {
-			return false;
-		}
-		binder.kill();
-		binders.remove(port);
-		return true;
-	}
-
-	@Override
-	public boolean bind(int port, AcceptListener listener) {
-		Binder binder = binders.get(port);
-		if (binder != null) {
-			return false;
-		}
-
-		binder = new Binder(port, listener);
-		binders.put(port, binder);
-		binder.bind();
-		return true;
-	}
-
-	@Override
-	public boolean connect(String name, int port, ConnectListener listener) {
-		Broker remoteBroker = manager.getBroker(name);
+	public synchronized IChannel connect(String remoteBrokerName, int port) {
+		Broker remoteBroker = BrokerManager.getInstance().getBroker(remoteBrokerName);
 		if (remoteBroker == null) {
-			return false;
+			return null; // Remote broker doesn't exist
 		}
-
-		Task task = new Task("Connect Task " + this.name + " " + name + " " + port);
-		task.post(new ConnectRunnable(port, listener, remoteBroker));
-		return true;
+		return remoteBroker._connect(this, port);
 	}
 
-	void _connect(int port, ConnectListener listener) {
-		Binder binder = binders.get(port);
-		if (binder == null) {
-			listener.refused();
-			return;
-		}
-		binder._acceptConnection(listener);
+	private IChannel _connect(Broker broker, int port) {
+		RendezVous rendezVous = null;
+		synchronized (acceptRendezVous) {
+            rendezVous = acceptRendezVous.get(port);
+			while (rendezVous == null) {
+				try {
+					acceptRendezVous.wait();
+					rendezVous = acceptRendezVous.get(port);
+				} catch (InterruptedException e) {
+					// Do nothing
+				}
+				rendezVous = acceptRendezVous.get(port);
+			}
+			acceptRendezVous.remove(port);
+        }
+		return rendezVous.connect(broker,port);
 	}
 
 	@Override
-	public String name() {
+	public IChannel accept(int port) throws IllegalStateException {
+		RendezVous rendezVous = null;
+		synchronized (acceptRendezVous) {
+			rendezVous = acceptRendezVous.get(port);
+			if (rendezVous != null) {
+				throw new IllegalStateException("Already accepting on port " + port);
+			}
+			rendezVous = new RendezVous();
+			acceptRendezVous.put(port, rendezVous);
+			acceptRendezVous.notifyAll();
+		}
+		IChannel ch;
+		ch = rendezVous.accept(this, port);
+		return ch;
+	}
+
+	@Override
+	public String getName() {
 		return name;
 	}
-
 }
