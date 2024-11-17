@@ -1,9 +1,9 @@
 import java.util.LinkedList;
 
-import event.Task;
-import ichannels.IChannel;
-import imessages.IMessageQueue;
-import imessages.Message;
+import Task;
+import IChannel;
+import IMessageQueue;
+import Message;
 
 public class MessageQueue implements IMessageQueue {
 	
