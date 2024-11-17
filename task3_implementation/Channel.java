@@ -1,3 +1,6 @@
+import Task;
+import IChannel;
+
 public class Channel implements IChannel {
 
 	private CircularBuffer inputBuffer;
