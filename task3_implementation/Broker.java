@@ -1,7 +1,7 @@
 import java.util.HashMap;
 
-import ichannels.IBroker;
-import ichannels.IChannel;
+import IBroker;
+import IChannel;
 
 public class Broker implements IBroker {
 	private final String name;
